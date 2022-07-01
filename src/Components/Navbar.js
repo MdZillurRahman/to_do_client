@@ -4,13 +4,14 @@ import { Link } from "react-router-dom";
 const Navbar = () => {
 
     const navbar = <>
-        <li><a>Calender</a></li>
-        <li><a>To-Do</a></li>
-        <li><a>Completed Task</a></li>
+        <li><Link to="/calender">Calender</Link></li>
+        <li><Link to="/todo">To-Do</Link></li>
+        <li><Link to="/completedTask">Completed Task</Link></li>
+
     </>
 
     return (
-        <div className="navbar bg-base-100">
+        <div className="navbar bg-blue-400 text-white text-xl">
   <div className="navbar-start">
     <div className="dropdown">
       <label tabIndex="0" className="btn btn-ghost lg:hidden">

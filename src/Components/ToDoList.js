@@ -2,30 +2,18 @@ import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 import EditTask from "../EditTask";
 import edit from "../images/edit.png";
-import CompletedTask from "./CompletedTask";
+import useTask from "../Hooks/useTask";
+import { FcCheckmark } from "react-icons/fc";
+
+import { FiPlus } from "react-icons/fi";
 
 const ToDoList = ({ date }) => {
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useTask(date);
   const [task, setTask] = useState({});
   const [field, setField] = useState(false);
   const [modal, setModal] = useState(false);
-  const [reload, setReload] = useState(true);
   const formattedDate = format(date, "PP");
-
-
-
-  useEffect(() => {
-    async function Data() {
-      const fetchData = await fetch(
-        `http://localhost:5000/task?date=${formattedDate}`
-      );
-      const res = await fetchData.json();
-      setTasks(res);
-      setReload(!reload);
-      
-    }
-    Data();
-  }, [formattedDate,reload]);
+  
 
   const handleKeyDown = (event) => {
     event.preventDefault();
@@ -35,7 +23,7 @@ const ToDoList = ({ date }) => {
       task: task,
     };
 
-    if (event.key === "Enter") {
+    const postFunc = () => {
       fetch("http://localhost:5000/task", {
         method: "POST",
         headers: {
@@ -48,12 +36,13 @@ const ToDoList = ({ date }) => {
           console.log(data);
         });
 
-        const task = document.getElementById("task");
-        task.value="";
+      const task = document.getElementById("task");
+      task.value = "";
+    };
+
+    if (event.key === "Enter") {
+      postFunc();
     }
-
-    
-
   };
 
   const handleComplete = (id) => {
@@ -73,65 +62,66 @@ const ToDoList = ({ date }) => {
   };
 
   return (
-    <>
-      
-      <div className="border w-80">
-        <p>To Do</p>
+    <div className="my-8">
+      <div className="border-2 w-80 rounded">
+        <p className="my-4 mx-2 text-xl">To Do Task</p>
         <button onClick={() => setField(true)}>
-          <p className="hover:text-blue-500">
-            <span
-              id="plus"
-              className="hover:bg-blue-500 hover:rounded-full hover:text-white font-bold"
-            >
-              +
-            </span>{" "}
-            Add a task
+          <p className="group mx-2 flex items-center">
+            <FiPlus className="group-hover:bg-blue-300 group-hover:rounded-full group-hover:text-white font-bold" />
+
+            <span className="group-hover:text-blue-300 mx-2">Add a task</span>
           </p>
         </button>
+
         {field && (
-          <input
-            onKeyDown={handleKeyDown}
-            className="absolute top-100 left-0 w-80"
-            type="text"
-            name="task"
-            id="task"
-          />
+          <>
+            <input
+              onKeyUp={handleKeyDown}
+              className="border border-gray-500 rounded absolute top-100 left-4 lg:left-[226px] w-80"
+              type="text"
+              name="task"
+              placeholder="New task"
+            />
+          </>
         )}
         {tasks.map((task) => (
           <>
-            <div className="flex items-center group">
-              {
-               task.role !== "completed" ? <><input
-               onClick={() => handleComplete(task._id)}
-               type="radio"
-               
-             />{" "}
-             {task.task}
-             <label
-               className="cursor-pointer"
-               htmlFor="editTask"
-               onClick={() => {
-                   setModal(true);
-                   setTask(task);
-               }}
-             >
-               <img
-                 className="invisible group-hover:visible w-4 "
-                 src={edit}
-                 alt=""
-               />
-             </label></> : ""
-                    
-                }
+            <div className=" group ml-2 my-2">
+              {task.role !== "completed" ? (
+                <div className="flex items-center justify-between">
+                  <div>
+                    <input
+                      onClick={() => handleComplete(task._id)}
+                      type="radio"
+                    />{" "}
+                    {task.task}
+                  </div>
+                  <label
+                    className="cursor-pointer"
+                    htmlFor="editTask"
+                    onClick={() => {
+                      setModal(true);
+                      setTask(task);
+                    }}
+                  >
+                    <img
+                      className="invisible group-hover:visible w-4"
+                      src={edit}
+                      alt=""
+                    />
+                  </label>
+                </div>
+              ) : (
+                ""
+              )}
             </div>
           </>
         ))}
-        
-
-        
       </div>
-      {modal && <EditTask task ={task} tasks ={tasks} setTasks={setTasks}></EditTask>}
-    </>
+      {modal && (
+        <EditTask task={task} tasks={tasks} setTasks={setTasks}></EditTask>
+      )}
+    </div>
   );
 };
 

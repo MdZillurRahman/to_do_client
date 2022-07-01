@@ -7,11 +7,8 @@ import { BsCalendar2Date } from "react-icons/bs";
 import { TbSubtask } from "react-icons/tb";
 
 const EditTask = ({ task, tasks, setTasks }) => {
-  const { getValues, register } = useForm();
-  
-  const [reload, setReload] = useState(true);
-
-  
+  const { getValues, register, reset } = useForm();
+    const [reload, setReload] = useState(true);
 
   const submitForm = (event) => {
     event.preventDefault();
@@ -63,7 +60,7 @@ fetch(`http://localhost:5000/task/${task._id}`, {
             <input id="taskName"
               className="border w-full rounded-lg mb-4 h-6"
               type="text" name="taskName"
-              defaultValue={task.task}
+              placeholder={task.task}
               {...register("taskName")}
             />
         
@@ -87,7 +84,10 @@ fetch(`http://localhost:5000/task/${task._id}`, {
             <p className="flex items-center gap-4 cursor-pointer mb-4">
               <TbSubtask /> Add Subtask
             </p>
-            <label
+            <label onClick={() => {
+              reset({taskName: `${task.task}`, details: "" });
+              setReload(!reload);
+            } }
               for="editTask"
               class="btn btn-sm btn-circle absolute right-2 top-2"
             >
