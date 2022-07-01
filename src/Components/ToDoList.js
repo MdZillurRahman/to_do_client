@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
-import { MdOutlineEdit } from "react-icons/md";
 import EditTask from "../EditTask";
 import edit from "../images/edit.png";
 
@@ -32,7 +31,7 @@ const ToDoList = ({ date }) => {
 
     if (event.key === "Enter") {
       fetch("http://localhost:5000/task", {
-        method: "Patch",
+        method: "Post",
         headers: {
           "content-type": "application/json",
         },
@@ -45,6 +44,18 @@ const ToDoList = ({ date }) => {
     }
   };
 
+  const handleComplete =(id)  => {
+    const url = `http://localhost:5000/task/${id}`;
+    fetch(url, {
+        method: 'DELETE'
+    })
+        .then(res => res.json())
+        .then(data => {
+            const remaining = tasks.filter(task => task._id !== id);
+            setTasks(remaining);
+        })
+  }
+
   return (
     <>
       <p>Selected Date: {formattedDate}</p>
@@ -53,7 +64,7 @@ const ToDoList = ({ date }) => {
         {tasks.map((task) => (
           <>
             <div className="flex items-center group">
-              <input type="radio" name="" id="" /> {task.task}
+              <input onClick={ () =>handleComplete(task._id)} type="radio" name="" id="" /> {task.task}
               <label className="cursor-pointer" htmlFor="editTask" onClick={() => setModal(true)}><img className="invisible group-hover:visible w-4 " src={edit} alt="" /></label>
             </div>
           </>
