@@ -74,9 +74,29 @@ const ToDoList = ({ date }) => {
 
   return (
     <>
-      <p>Selected Date: {formattedDate}</p>
-      <div>
+      
+      <div className="border w-80">
         <p>To Do</p>
+        <button onClick={() => setField(true)}>
+          <p className="hover:text-blue-500">
+            <span
+              id="plus"
+              className="hover:bg-blue-500 hover:rounded-full hover:text-white font-bold"
+            >
+              +
+            </span>{" "}
+            Add a task
+          </p>
+        </button>
+        {field && (
+          <input
+            onKeyDown={handleKeyDown}
+            className="absolute top-100 left-0 w-80"
+            type="text"
+            name="task"
+            id="task"
+          />
+        )}
         {tasks.map((task) => (
           <>
             <div className="flex items-center group">
@@ -106,30 +126,11 @@ const ToDoList = ({ date }) => {
             </div>
           </>
         ))}
-        <button onClick={() => setField(true)}>
-          <p className="hover:text-blue-500">
-            <span
-              id="plus"
-              className="hover:bg-blue-500 hover:rounded-full hover:text-white font-bold"
-            >
-              +
-            </span>{" "}
-            Add a task
-          </p>
-        </button>
+        
 
-        {field && (
-          <input
-            onKeyDown={handleKeyDown}
-            className="border-2 absolute top-100 left-0"
-            type="text"
-            name="task"
-            id="task"
-          />
-        )}
+        
       </div>
       {modal && <EditTask task ={task} tasks ={tasks} setTasks={setTasks}></EditTask>}
-      <CompletedTask ></CompletedTask>
     </>
   );
 };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { MdDeleteOutline } from "react-icons/md";
 import { ImAttachment } from "react-icons/im";
@@ -8,6 +8,10 @@ import { TbSubtask } from "react-icons/tb";
 
 const EditTask = ({ task, tasks, setTasks }) => {
   const { getValues, register } = useForm();
+  
+  const [reload, setReload] = useState(true);
+
+  
 
   const submitForm = (event) => {
     event.preventDefault();
@@ -30,6 +34,8 @@ fetch(`http://localhost:5000/task/${task._id}`, {
         .then((data) => {
           console.log(data);
         });
+        
+      setReload(!reload);
 
   };
 
@@ -43,6 +49,8 @@ fetch(`http://localhost:5000/task/${task._id}`, {
         const remaining = tasks.filter((task) => task._id !== id);
         setTasks(remaining);
       });
+      
+      setReload(!reload);
   };
 
   return (
@@ -52,14 +60,14 @@ fetch(`http://localhost:5000/task/${task._id}`, {
         <div class="modal-box h-[450px]">
           <form className=" mt-6" onSubmit={submitForm}>
             <label className=" text-gray-400">Task Name*</label>
-            <input
+            <input id="taskName"
               className="border w-full rounded-lg mb-4 h-6"
               type="text" name="taskName"
               defaultValue={task.task}
               {...register("taskName")}
             />
-       
-            <textarea
+        
+            <textarea id="details"
               class="textarea textarea-bordered mb-4 w-full"
               type="text"
               name="details"
@@ -85,13 +93,13 @@ fetch(`http://localhost:5000/task/${task._id}`, {
             >
               ✕
             </label>
-            <button
-              onClick={() => handleDelete(task._id)}
-              for="editTask"
-              className="absolute top-3 left-3 "
+            <label
+              for="editTask" onClick={() => handleDelete(task._id)} 
+              class="absolute top-3 left-3"
             >
               <MdDeleteOutline className="hover:text-red-500 text-2xl" />
-            </button>
+            </label>
+            
             <input
               className="absolute right-4 my-4 text-white border bg-blue-400 px-5 py-1 rounded-xl uppercase"
               type="submit"

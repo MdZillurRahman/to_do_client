@@ -16,7 +16,7 @@ const Home = () => {
             <Calender date={date} setDate={setDate}></Calender>
             </div>
             <ToDoList date={date}></ToDoList>
-            
+            <CompletedTask date={date}></CompletedTask>
             
         </div>
     );
