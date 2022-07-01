@@ -10,7 +10,7 @@ const useTask = (date) => {
   useEffect(() => {
     async function Data() {
       const fetchData = await fetch(
-        `http://localhost:5000/task?date=${formattedDate}`
+        `https://friendly-bunnyhug-96716.herokuapp.com/task?date=${formattedDate}`
       );
       const res = await fetchData.json();
       setTasks(res);

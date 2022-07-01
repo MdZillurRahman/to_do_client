@@ -20,7 +20,7 @@ const updateTask = {
     details: details
 }
 
-fetch(`http://localhost:5000/task/${task._id}`, {
+fetch(`https://friendly-bunnyhug-96716.herokuapp.com/task/${task._id}`, {
         method: "PATCH",
         headers: {
           "content-type": "application/json",
@@ -37,7 +37,7 @@ fetch(`http://localhost:5000/task/${task._id}`, {
   };
 
   const handleDelete = (id) => {
-    const url = `http://localhost:5000/task/${id}`;
+    const url = `https://friendly-bunnyhug-96716.herokuapp.com/task/${id}`;
     fetch(url, {
       method: "DELETE",
     })
