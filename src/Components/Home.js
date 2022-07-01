@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Calender from './Calender';
+import CompletedTask from './CompletedTask';
 import ToDoList from './ToDoList';
 
 const Home = () => {
@@ -15,6 +16,7 @@ const Home = () => {
             <Calender date={date} setDate={setDate}></Calender>
             </div>
             <ToDoList date={date}></ToDoList>
+            
             
         </div>
     );

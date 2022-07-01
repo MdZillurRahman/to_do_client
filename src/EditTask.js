@@ -1,70 +1,108 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import React from "react";
+import { useForm } from "react-hook-form";
+import { MdDeleteOutline } from "react-icons/md";
+import { ImAttachment } from "react-icons/im";
+import { FaFileSignature } from "react-icons/fa";
+import { BsCalendar2Date } from "react-icons/bs";
+import { TbSubtask } from "react-icons/tb";
 
-const schema = yup.object().shape({
-    studentName: yup.string().required(),
-    class: yup.number().positive().integer().min(1).max(12).required(),
-    score: yup.number().positive().integer().min(0).max(100).required()
-})
+const EditTask = ({ task, tasks, setTasks }) => {
+  const { getValues, register } = useForm();
 
-const EditTask = () => {
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-      } = useForm({ resolver: yupResolver(schema)});
-    
-     const submitForm = (data) => {console.log(data);}
-    
-      return (
-        <div>
-          <input type="checkbox" id="editTask" class="modal-toggle" />
-          <div class="modal">
-            <div class="modal-box h-[500px]">
-              <h3 class="text-lg font-bold my-2">Edit Student</h3>
-              <hr className=" border-[#D3D6DB] border-solid w-full mb-4" />
-    
-              { /* ADDStudent  */}
-              <form onSubmit={handleSubmit(submitForm)}>
-    
-                {/* Name */}
-                <label className="uppercase text-gray-400">Student Name*</label> 
-                <input className="border w-full rounded-lg" type="text" name="studentName"  
-                {...register("studentName")}/>
-              {errors.studentName && <p className="text-red-500 mb-4">Error: Name field cannot be left blank</p> }
-    
-                {/* Class  */}
-                <label className="uppercase text-gray-400">Class*</label>
-                <input className="border w-full rounded-lg" type="text" name="class" 
-                {...register("class")} />
-                {errors.class && <p className="text-red-500 mb-4">Error: Please input values between 1 {"&"} 12</p> }
-    
-                {/* Score  */}
-                <label className="uppercase text-gray-400">Score*</label>
-                <input className="border w-full rounded-lg" type="text" name="score" 
-                {...register("score")} />
-                {errors.score && <p className="text-red-500 mb-4">Error: Score field cannot be left blank</p> }
-    
-                {/* Result  */}
-                <label className="uppercase text-gray-400">Result</label>
-                <p>-</p>
-    
-                {/* Grade  */}
-                <label className="uppercase text-gray-400">Grade</label>
-                <p>-</p>
-    
-                <hr className=" border-[#D3D6DB] border-solid w-full " />
-    
-                <label className="absolute right-28 my-4 text-[#2CA4D8] border border-[#2CA4D8] px-5 py-1 rounded-xl mr-6 uppercase" htmlFor="editTask">Cancel</label>
-                <input className="absolute right-4 my-4 my-4 text-white border bg-gray-400 px-5 py-1 rounded-xl uppercase" type="submit" value="Confirm" id="submit" />
-              </form>
-    
-            </div>
-          </div>
+  const submitForm = (event) => {
+    event.preventDefault();
+    const taskName = getValues("taskName");
+    const details = getValues("details");
+
+const updateTask = {
+    task: taskName,
+    details: details
+}
+
+fetch(`http://localhost:5000/task/${task._id}`, {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(updateTask),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+        });
+
+  };
+
+  const handleDelete = (id) => {
+    const url = `http://localhost:5000/task/${id}`;
+    fetch(url, {
+      method: "DELETE",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const remaining = tasks.filter((task) => task._id !== id);
+        setTasks(remaining);
+      });
+  };
+
+  return (
+    <div>
+      <input type="checkbox" id="editTask" class="modal-toggle" />
+      <div class="modal">
+        <div class="modal-box h-[450px]">
+          <form className=" mt-6" onSubmit={submitForm}>
+            <label className=" text-gray-400">Task Name*</label>
+            <input
+              className="border w-full rounded-lg mb-4 h-6"
+              type="text" name="taskName"
+              defaultValue={task.task}
+              {...register("taskName")}
+            />
+       
+            <textarea
+              class="textarea textarea-bordered mb-4 w-full"
+              type="text"
+              name="details"
+              placeholder="Add Details"
+              {...register("details")}
+            ></textarea>{" "}
+            <br />
+            <p className="flex items-center gap-4 cursor-pointer mb-4">
+              <ImAttachment /> Attach File
+            </p>
+            <p className="flex items-center gap-4 cursor-pointer mb-4">
+              <FaFileSignature /> Add Signature
+            </p>
+            <p className="flex items-center gap-4 cursor-pointer mb-4">
+              <BsCalendar2Date /> Add Date
+            </p>
+            <p className="flex items-center gap-4 cursor-pointer mb-4">
+              <TbSubtask /> Add Subtask
+            </p>
+            <label
+              for="editTask"
+              class="btn btn-sm btn-circle absolute right-2 top-2"
+            >
+              ✕
+            </label>
+            <button
+              onClick={() => handleDelete(task._id)}
+              for="editTask"
+              className="absolute top-3 left-3 "
+            >
+              <MdDeleteOutline className="hover:text-red-500 text-2xl" />
+            </button>
+            <input
+              className="absolute right-4 my-4 text-white border bg-blue-400 px-5 py-1 rounded-xl uppercase"
+              type="submit"
+              value="Confirm"
+              id="submit"
+            />
+          </form>
         </div>
-      );
+      </div>
+    </div>
+  );
 };
 
 export default EditTask;

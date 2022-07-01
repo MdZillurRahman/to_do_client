@@ -2,14 +2,17 @@ import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 import EditTask from "../EditTask";
 import edit from "../images/edit.png";
+import CompletedTask from "./CompletedTask";
 
 const ToDoList = ({ date }) => {
   const [tasks, setTasks] = useState([]);
+  const [task, setTask] = useState({});
   const [field, setField] = useState(false);
   const [modal, setModal] = useState(false);
+  const [reload, setReload] = useState(true);
   const formattedDate = format(date, "PP");
 
-  console.log(modal);
+
 
   useEffect(() => {
     async function Data() {
@@ -18,12 +21,15 @@ const ToDoList = ({ date }) => {
       );
       const res = await fetchData.json();
       setTasks(res);
+      setReload(!reload);
+      
     }
     Data();
-  }, [formattedDate]);
+  }, [formattedDate,reload]);
 
   const handleKeyDown = (event) => {
-    const task = event.target.value;
+    event.preventDefault();
+    let task = event.target.value;
     const taskAdd = {
       date: formattedDate,
       task: task,
@@ -31,7 +37,7 @@ const ToDoList = ({ date }) => {
 
     if (event.key === "Enter") {
       fetch("http://localhost:5000/task", {
-        method: "Post",
+        method: "POST",
         headers: {
           "content-type": "application/json",
         },
@@ -41,31 +47,62 @@ const ToDoList = ({ date }) => {
         .then((data) => {
           console.log(data);
         });
+
+        const task = document.getElementById("task");
+        task.value="";
     }
+
+    
+
   };
 
-  const handleComplete =(id)  => {
+  const handleComplete = (id) => {
     const url = `http://localhost:5000/task/${id}`;
+
     fetch(url, {
-        method: 'DELETE'
+      method: "PUT",
+      headers: {
+        "content-type": "application/json",
+      },
     })
-        .then(res => res.json())
-        .then(data => {
-            const remaining = tasks.filter(task => task._id !== id);
-            setTasks(remaining);
-        })
-  }
+      .then((res) => res.json())
+      .then((data) => {
+        const remaining = tasks.filter((task) => task._id !== id);
+        setTasks(remaining);
+      });
+  };
 
   return (
     <>
       <p>Selected Date: {formattedDate}</p>
       <div>
-        <p>To DO</p>
+        <p>To Do</p>
         {tasks.map((task) => (
           <>
             <div className="flex items-center group">
-              <input onClick={ () =>handleComplete(task._id)} type="radio" name="" id="" /> {task.task}
-              <label className="cursor-pointer" htmlFor="editTask" onClick={() => setModal(true)}><img className="invisible group-hover:visible w-4 " src={edit} alt="" /></label>
+              {
+               task.role !== "completed" ? <><input
+               onClick={() => handleComplete(task._id)}
+               type="radio"
+               
+             />{" "}
+             {task.task}
+             <label
+               className="cursor-pointer"
+               htmlFor="editTask"
+               onClick={() => {
+                   setModal(true);
+                   setTask(task);
+               }}
+             >
+               <img
+                 className="invisible group-hover:visible w-4 "
+                 src={edit}
+                 alt=""
+               />
+             </label></> : ""
+                    
+                }
             </div>
           </>
         ))}
@@ -87,11 +124,12 @@ const ToDoList = ({ date }) => {
             className="border-2 absolute top-100 left-0"
             type="text"
             name="task"
-            id=""
+            id="task"
           />
         )}
       </div>
-      {modal && <EditTask></EditTask>}
+      {modal && <EditTask task ={task} tasks ={tasks} setTasks={setTasks}></EditTask>}
+      <CompletedTask ></CompletedTask>
     </>
   );
 };
