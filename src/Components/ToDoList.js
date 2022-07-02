@@ -4,6 +4,7 @@ import EditTask from "../EditTask";
 import edit from "../images/edit.png";
 import useTask from "../Hooks/useTask";
 import { FcCheckmark } from "react-icons/fc";
+import { BiDotsVerticalRounded } from "react-icons/bi";
 
 import { FiPlus } from "react-icons/fi";
 
@@ -62,9 +63,13 @@ const ToDoList = ({ date }) => {
   };
 
   return (
-    <div className="my-8">
+    <div className="my-20">
       <div className="border-2 w-80 rounded">
-        <p className="my-4 mx-2 text-xl">To Do Task</p>
+        <div className="flex justify-between items-center">
+          <p className="my-4 mx-2 text-xl">To Do Task</p>
+          <BiDotsVerticalRounded className="text-xl mr-2"/>
+        </div>
+        
         <button onClick={() => setField(true)}>
           <p className="group mx-2 flex items-center">
             <FiPlus className="group-hover:bg-blue-300 group-hover:rounded-full group-hover:text-white font-bold" />
@@ -88,7 +93,7 @@ const ToDoList = ({ date }) => {
           <>
             <div className=" group ml-2 my-2">
               {task.role !== "completed" ? (
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between ">
                   <div>
                     <input
                       onClick={() => handleComplete(task._id)}

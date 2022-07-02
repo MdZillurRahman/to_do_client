@@ -7,6 +7,7 @@ import ToDoList from "./Components/ToDoList";
 import CompletedTask from "./Components/CompletedTask";
 import { useState } from "react";
 import Footer from "./Components/Footer";
+import About from "./Components/About";
 
 function App() {
   const [date, setDate] = useState(new Date());
@@ -16,6 +17,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home></Home>}></Route>
         <Route path="/home" element={<Home></Home>}></Route>
+        <Route path="/about" element={<About></About>}></Route>
         <Route path="/calender" element={<Calender date={date} setDate={setDate}></Calender>}></Route>
         <Route path="/todo" element={<ToDoList date={date}></ToDoList>}></Route>
         <Route path="/completedTask" element={<CompletedTask date={date}></CompletedTask>}></Route>
