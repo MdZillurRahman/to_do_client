@@ -1,24 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
-import EditTask from "../EditTask";
+import EditTask from "./EditTask";
 import edit from "../images/edit.png";
 import useTask from "../Hooks/useTask";
 import { FcCheckmark } from "react-icons/fc";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 
 import { FiPlus } from "react-icons/fi";
+import { useForm } from "react-hook-form";
 
 const ToDoList = ({ date }) => {
   const [tasks, setTasks] = useTask(date);
   const [task, setTask] = useState({});
   const [field, setField] = useState(false);
   const [modal, setModal] = useState(false);
+  const { getValues, register, reset } = useForm();
   const formattedDate = format(date, "PP");
   
 
   const handleKeyDown = (event) => {
     event.preventDefault();
-    let task = event.target.value;
+    const task = getValues("task");
     const taskAdd = {
       date: formattedDate,
       task: task,
@@ -36,13 +38,12 @@ const ToDoList = ({ date }) => {
         .then((data) => {
           console.log(data);
         });
-
-      const task = document.getElementById("task");
-      task.value = "";
+        
     };
 
     if (event.key === "Enter") {
       postFunc();
+      reset({task: "" });
     }
   };
 
@@ -86,6 +87,7 @@ const ToDoList = ({ date }) => {
               type="text"
               name="task"
               placeholder="New task"
+              {...register("task")}
             />
           </>
         )}
